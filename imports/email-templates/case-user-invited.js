@@ -32,7 +32,7 @@ Please follow ${
 
   ` + optOutText(settingType, notificationId, invitee),
   attachments: [{
-    path: 'https://s3-ap-southeast-1.amazonaws.com/prod-media-unee-t/2018-06-14/unee-t_logo_email.png',
+    path: 'https://media.dev.unee-t.com/2019-02-21/logo.hmlet.png',
     cid: 'logo@unee-t.com'
   }]
 })
