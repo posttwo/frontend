@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing Meteor
+      - curl https://install.meteor.com/ | sh
+  build:
+    commands:
+      - meteor npm install
+      - npm t
+      - 'sed -i "s/<\!-- COMMIT: -->/<\!-- COMMIT: $CODEBUILD_SOURCE_VERSION -->/g" client/main.html'
+      - meteor build ..
+      - ls ..
+      - aws s3 cp --acl public-read ../frontend.tar.gz s3://unee-t-media/frontend/${CODEBUILD_SOURCE_VERSION}.tar.gz;
