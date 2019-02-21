@@ -1,6 +1,14 @@
 version: 0.2
 
+env:
+  variables:
+    APP: "frontend"
+    ACCOUNT: "812644853088"
+
 phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email --region ${AWS_REGION})
   install:
     commands:
       - echo Installing Meteor
@@ -9,6 +17,12 @@ phases:
     commands:
       - meteor npm install
       - 'sed -i "s/<\!-- COMMIT: -->/<\!-- COMMIT: $CODEBUILD_SOURCE_VERSION -->/g" client/main.html'
-      - meteor build .. --allow-superuser
+      - meteor build --directory /tmp/export-meteor/build --allow-superuser
+      - printf "FROM ulexus/meteor\nCOPY build /home/meteor/www\nRUN chown -R meteor:meteor /home/meteor/\n" >/tmp/export-meteor/Dockerfile
+      - cd /tmp/export-meteor
       - ls ..
-      - aws s3 cp --acl public-read ../frontend.tar.gz s3://unee-t-media/frontend/${CODEBUILD_SOURCE_VERSION}.tar.gz;
+      - docker build -t ${APP} .
+      - docker tag ${APP}:latest ${ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP}:latest
+  post_build:
+    commands:
+      - docker push ${ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP}:latest
