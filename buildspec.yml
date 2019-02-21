@@ -8,8 +8,7 @@ phases:
   build:
     commands:
       - meteor npm install
-      - npm t
       - 'sed -i "s/<\!-- COMMIT: -->/<\!-- COMMIT: $CODEBUILD_SOURCE_VERSION -->/g" client/main.html'
-      - meteor build ..
+      - meteor build .. --allow-superuser
       - ls ..
       - aws s3 cp --acl public-read ../frontend.tar.gz s3://unee-t-media/frontend/${CODEBUILD_SOURCE_VERSION}.tar.gz;
