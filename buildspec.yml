@@ -18,7 +18,7 @@ phases:
       - meteor npm install
       - 'sed -i "s/<\!-- COMMIT: -->/<\!-- COMMIT: $CODEBUILD_SOURCE_VERSION -->/g" client/main.html'
       - meteor build --directory /tmp/export-meteor/build --allow-superuser
-      - printf "FROM ulexus/meteor\nCOPY build /home/meteor/www\nRUN chown -R meteor:meteor /home/meteor/\nRUN apt-get update && apt-get install -y build-essential g++" >/tmp/export-meteor/Dockerfile
+      - printf "FROM ulexus/meteor\nCOPY build /home/meteor/www\nRUN chown -R meteor:meteor /home/meteor/\nRUN curl -sL https://deb.nodesource.com/setup_8.x | bash -\nRUN apt-get update && apt-get install -y nodejs build-essential g++" >/tmp/export-meteor/Dockerfile
       - cd /tmp/export-meteor
       - ls ..
       - docker build -t ${APP} .
